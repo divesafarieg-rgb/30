@@ -1,0 +1,4 @@
+Werkzeug==2.0.0
+Flask==2.0.0
+SQLAlchemy==1.4.0
+flask_profiler==1.8.1
