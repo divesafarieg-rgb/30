@@ -1,14 +1,18 @@
+from typing import Any, Optional
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+
 
 db = SQLAlchemy()
 
 
-def create_app(config_class=None):
+def create_app(config_class: Optional[Any] = None) -> Flask:
     app = Flask(__name__)
 
     if config_class is None:
         from config import Config
+
         app.config.from_object(Config)
     else:
         app.config.from_object(config_class)
@@ -16,6 +20,7 @@ def create_app(config_class=None):
     db.init_app(app)
 
     from app import routes
+
     app.register_blueprint(routes.bp)
 
     with app.app_context():
@@ -23,6 +28,7 @@ def create_app(config_class=None):
         print("Database tables created successfully!")
 
         from app.models import Client, Parking
+
         clients_count = Client.query.count()
         parkings_count = Parking.query.count()
         print(f"Clients in DB: {clients_count}, Parkings in DB: {parkings_count}")
