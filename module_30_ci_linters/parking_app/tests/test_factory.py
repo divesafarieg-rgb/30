@@ -1,11 +1,9 @@
-import pytest
 from app import db
 from app.models import Client, Parking
 from tests.factories import ClientFactory, ParkingFactory
 
 
 class TestClientFactory:
-
     def test_create_client_with_factory(self, app):
         with app.app_context():
             client = ClientFactory()
@@ -44,21 +42,16 @@ class TestClientFactory:
 
     def test_client_with_specific_data(self, app):
         with app.app_context():
-            specific_data = {
-                'name': 'Петр',
-                'surname': 'Петров',
-                'car_number': 'A123BC'
-            }
+            specific_data = {"name": "Петр", "surname": "Петров", "car_number": "A123BC"}
 
             client = ClientFactory(**specific_data)
 
-            assert client.name == 'Петр'
-            assert client.surname == 'Петров'
-            assert client.car_number == 'A123BC'
+            assert client.name == "Петр"
+            assert client.surname == "Петров"
+            assert client.car_number == "A123BC"
 
 
 class TestParkingFactory:
-
     def test_create_parking_with_factory(self, app):
         with app.app_context():
             parking = ParkingFactory()
@@ -100,22 +93,21 @@ class TestParkingFactory:
     def test_parking_with_specific_data(self, app):
         with app.app_context():
             specific_data = {
-                'address': 'ул. Тестовая, 1',
-                'opened': True,
-                'count_places': 100,
-                'count_available_places': 75
+                "address": "ул. Тестовая, 1",
+                "opened": True,
+                "count_places": 100,
+                "count_available_places": 75,
             }
 
             parking = ParkingFactory(**specific_data)
 
-            assert parking.address == 'ул. Тестовая, 1'
+            assert parking.address == "ул. Тестовая, 1"
             assert parking.opened is True
             assert parking.count_places == 100
             assert parking.count_available_places == 75
 
 
 class TestIntegrationWithFactories:
-
     def test_create_client_and_parking(self, app):
         with app.app_context():
             client = ClientFactory(has_credit_card=True)
@@ -132,18 +124,18 @@ class TestIntegrationWithFactories:
             clients = [
                 ClientFactory(has_credit_card=True),
                 ClientFactory(has_credit_card=False),
-                ClientFactory(name='Иван', surname='Иванов')
+                ClientFactory(name="Иван", surname="Иванов"),
             ]
 
             assert len(clients) == 3
             assert clients[0].credit_card is not None
             assert clients[1].credit_card is None
-            assert clients[2].name == 'Иван'
+            assert clients[2].name == "Иван"
 
             parkings = [
                 ParkingFactory(opened=True, count_places=50),
                 ParkingFactory(opened=False, count_places=30),
-                ParkingFactory(count_places=100, count_available_places=0)
+                ParkingFactory(count_places=100, count_available_places=0),
             ]
 
             assert len(parkings) == 3
