@@ -1,15 +1,17 @@
-from flask import Blueprint, request, jsonify
-from app import db
-from app.models import Client, Parking, ClientParking
 from datetime import datetime
+from flask import Blueprint, request, jsonify, Response
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
+from typing import Tuple
+
+from app import db
+from app.models import Client, Parking, ClientParking
 
 bp = Blueprint('main', __name__)
 
 
 @bp.route('/')
-def index():
+def index() -> Tuple[Response, int]:
     return jsonify({
         'message': 'Parking API is running',
         'endpoints': {
@@ -20,11 +22,11 @@ def index():
             'POST /client_parkings': 'Enter parking',
             'DELETE /client_parkings': 'Exit parking'
         }
-    })
+    }), 200
 
 
 @bp.route('/clients', methods=['GET'])
-def get_clients():
+def get_clients() -> Tuple[Response, int]:
     try:
         stmt = select(Client)
         clients = db.session.execute(stmt).scalars().all()
@@ -34,7 +36,7 @@ def get_clients():
 
 
 @bp.route('/clients/<int:client_id>', methods=['GET'])
-def get_client(client_id):
+def get_client(client_id: int) -> Tuple[Response, int]:
     try:
         client = db.session.get(Client, client_id)
         if not client:
@@ -45,7 +47,7 @@ def get_client(client_id):
 
 
 @bp.route('/clients', methods=['POST'])
-def create_client():
+def create_client() -> Tuple[Response, int]:
     data = request.get_json()
 
     if not data:
@@ -72,7 +74,7 @@ def create_client():
 
 
 @bp.route('/parkings', methods=['POST'])
-def create_parking():
+def create_parking() -> Tuple[Response, int]:
     data = request.get_json()
 
     if not data:
@@ -106,7 +108,7 @@ def create_parking():
 
 
 @bp.route('/client_parkings', methods=['POST'])
-def enter_parking():
+def enter_parking() -> Tuple[Response, int]:
     data = request.get_json()
 
     if not data:
@@ -137,7 +139,7 @@ def enter_parking():
         stmt = select(ClientParking).where(
             ClientParking.client_id == client.id,
             ClientParking.parking_id == parking.id,
-            ClientParking.time_out == None
+            ClientParking.time_out.is_(None)
         )
         active_session = db.session.execute(stmt).scalar_one_or_none()
 
@@ -170,7 +172,7 @@ def enter_parking():
 
 
 @bp.route('/client_parkings', methods=['DELETE'])
-def exit_parking():
+def exit_parking() -> Tuple[Response, int]:
     data = request.get_json()
 
     if not data:
@@ -195,7 +197,7 @@ def exit_parking():
         stmt = select(ClientParking).where(
             ClientParking.client_id == client.id,
             ClientParking.parking_id == parking.id,
-            ClientParking.time_out == None
+            ClientParking.time_out.is_(None)
         )
         active_session = db.session.execute(stmt).scalar_one_or_none()
 
@@ -203,12 +205,11 @@ def exit_parking():
             return jsonify({'error': 'No active parking session found'}), 404
 
         active_session.time_out = datetime.now()
-
         parking.count_available_places += 1
 
         parking_duration = active_session.time_out - active_session.time_in
         hours = parking_duration.total_seconds() / 3600
-        cost = round(hours * 100, 2)  # 100 рублей в час
+        cost = round(hours * 100, 2)
 
         db.session.commit()
 
