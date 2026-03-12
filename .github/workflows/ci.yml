@@ -6,10 +6,6 @@ on:
   pull_request:
     branches: [ main ]
 
-defaults:
-  run:
-    working-directory: ./parking_app
-
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -30,22 +26,27 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements-dev.txt
         pip install -r requirements.txt
+      working-directory: ./module_30_ci_linters/parking_app
 
     - name: Check with isort
       run: |
         isort --check-only --diff app tests
+      working-directory: ./module_30_ci_linters/parking_app
 
     - name: Check with black
       run: |
         black --check --diff app tests
+      working-directory: ./module_30_ci_linters/parking_app
 
     - name: Lint with flake8
       run: |
         flake8 app tests --count --statistics
+      working-directory: ./module_30_ci_linters/parking_app
 
     - name: Type check with mypy
       run: |
         mypy app --ignore-missing-imports
+      working-directory: ./module_30_ci_linters/parking_app
 
   test:
     runs-on: ubuntu-latest
@@ -67,9 +68,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements-dev.txt
         pip install -r requirements.txt
-      working-directory: ./parking_app
+      working-directory: ./module_30_ci_linters/parking_app
 
     - name: Test with pytest
       run: |
         pytest tests/ -v --cov=app --cov-report=xml --cov-report=term-missing
-      working-directory: ./parking_app
+      working-directory: ./module_30_ci_linters/parking_app
