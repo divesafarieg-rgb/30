@@ -5,7 +5,6 @@ from app import db
 
 
 class Client(db.Model):
-
     __tablename__ = "client"
 
     id: int = db.Column(db.Integer, primary_key=True)
@@ -30,7 +29,6 @@ class Client(db.Model):
 
 
 class Parking(db.Model):
-
     __tablename__ = "parking"
 
     id: int = db.Column(db.Integer, primary_key=True)
@@ -55,7 +53,6 @@ class Parking(db.Model):
 
 
 class ClientParking(db.Model):
-
     __tablename__ = "client_parking"
 
     id: int = db.Column(db.Integer, primary_key=True)
@@ -77,5 +74,3 @@ class ClientParking(db.Model):
             "time_in": self.time_in.isoformat() if self.time_in else None,
             "time_out": self.time_out.isoformat() if self.time_out else None,
         }
-
-
