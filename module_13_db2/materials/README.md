@@ -1,1 +1,0 @@
-Запустите скрипт `generate_practice_database.py` перед просмотром материалов.
